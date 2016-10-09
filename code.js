@@ -9,9 +9,9 @@ var width = 800;
 var assetNames = ['turtle', 'background'];
 var assets = {};
 
-var pendingLoads = assetNames.length;
+var globalState = {};
 
-console.log("hi");
+var pendingLoads = assetNames.length;
 
 function showLoadProgress() {
     ctx.fillStyle = "yellow";
@@ -25,7 +25,7 @@ function checkLoadComplete() {
         setupEvents();
         canvas.focus();
         ctx.drawImage(assets.background, 0, 0);
-        state.clean = ctx.getImageData(0, 0, width, height);
+        globalState.clean = ctx.getImageData(0, 0, width, height);
         ctx.fillStyle = "yellow";
         ctx.font = "48px Helvetica";
         ctx.fillText("Press ENTER ...", 200, height/2);
@@ -47,6 +47,6 @@ function setupEvents() {
     canvas.onkeydown = function(event) {
         console.log("keydown", event);
         //drawImage(assets.background, 0, 0);
-        ctx.putImageData(state.clean, 0, 0);
+        ctx.putImageData(globalState.clean, 0, 0);
     };
 }
