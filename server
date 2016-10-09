@@ -1,0 +1,7 @@
+#!/usr/bin/python
+import SimpleHTTPServer
+import SocketServer
+ip, port = ("127.0.0.1", 8000)
+httpd = SocketServer.TCPServer((ip, port), SimpleHTTPServer.SimpleHTTPRequestHandler)
+print "serving at http://%s:%s/" % (ip, port)
+httpd.serve_forever()

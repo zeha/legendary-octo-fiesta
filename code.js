@@ -2,28 +2,51 @@ var canvas = document.getElementById('mycanvas');
 var ctx = canvas.getContext('2d');
 
 // RGBA8888
-var size = 4;
-var height = 200;
-var width = 200;
-var imageData = ctx.getImageData(0, 0, width, height);
+var pixelSize = 4;
+var height = 800;
+var width = 800;
 
-var x;
-var y;
-for(x=0; x<200; x++) {
-    //for (y=0; y<30; y++) {
-        imageData.data[(y*width*size) + (x*size) + 0] = 0xff;
-        imageData.data[(y*width*size) + (x*size) + 1] = 0x8f;
-        imageData.data[(y*width*size) + (x*size) + 2] = 0x00;
-        imageData.data[(y*width*size) + (x*size) + 3] = 0xff;
-    //}
-    y=x;
+var assetNames = ['turtle', 'background'];
+var assets = {};
+
+var pendingLoads = assetNames.length;
+
+console.log("hi");
+
+function showLoadProgress() {
+    ctx.fillStyle = "yellow";
+    ctx.font = "14px Helvetica";
+    ctx.fillText("Loading "+pendingLoads+" of "+assetNames.length+" ...", 200, height/2);
 }
-ctx.putImageData(imageData, 0, 0);
 
-console.log(imageData);
+function checkLoadComplete() {
+    // console.log("pending:", pendingLoads);
+    if (pendingLoads == 0) {
+        setupEvents();
+        canvas.focus();
+        ctx.drawImage(assets.background, 0, 0);
+        state.clean = ctx.getImageData(0, 0, width, height);
+        ctx.fillStyle = "yellow";
+        ctx.font = "48px Helvetica";
+        ctx.fillText("Press ENTER ...", 200, height/2);
+    } else {
+        showLoadProgress();
+    }
+}
 
+showLoadProgress();
+assetNames.forEach(function(assetName) {
+    var i = new Image();
+    console.log("loading asset", assetName);
+    i.onload = function() { pendingLoads--; checkLoadComplete(); }
+    i.src = assetName + ".png";
+    assets[assetName] = i;
+}, this);
 
-ctx.strokeStyle = 'rgb(170,170,0)';
-ctx.beginPath();
-ctx.arc(200, 200, 40, 0, 360, false);
-ctx.stroke();
+function setupEvents() {
+    canvas.onkeydown = function(event) {
+        console.log("keydown", event);
+        //drawImage(assets.background, 0, 0);
+        ctx.putImageData(state.clean, 0, 0);
+    };
+}
